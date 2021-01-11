@@ -1,0 +1,12 @@
+OBJS=calculator.o cal.o
+CFLAGS=-g -c
+CC=gcc
+
+morph: $(OBJS)
+	$(CC) -o cal $(OBJS)
+clean:
+	rm -f $(OBJS) cal
+.c.o:
+	$(CC) $(CFLAGS) $*.c
+
+

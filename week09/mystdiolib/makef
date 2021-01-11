@@ -1,0 +1,10 @@
+OBJS = mymain.o myfclose.o myfgetc.o myfopen.o myfputc.o
+CC = gcc
+CFLAGS = -c
+
+morph: $(OBJS)
+	$(CC) -o mystdio $(OBJS)
+clean:
+	rm -f $(OBJS) mystdio
+.c.o:
+	$(CC) $(CFLAGS) $*.c

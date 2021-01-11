@@ -1,0 +1,97 @@
+/**
+ *  파일을 생성하여 키보드로 입력된 데이터를 씀
+ */
+static void kWriteDataToFile( const char* pcParameterBuffer )
+{
+    FILE* fp;
+    int iEnterCount;
+    BYTE bKey;
+    
+    // 파일 생성
+    fp = fopen( pcParameterBuffer, "w" );
+    if( fp == NULL )
+    {
+        kPrintf( "%s File Open Fail\n", vcFileName );
+        return ;
+    }
+    
+    // 엔터 키가 연속으로 3번 눌러질 때까지 내용을 파일에 씀
+    iEnterCount = 0;
+    while( 1 )
+    {
+        bKey = kGetCh();
+        // 엔터 키이면 연속 3번 눌러졌는가 확인하여 루프를 빠져 나감
+        if( bKey == KEY_ENTER )
+        {
+            iEnterCount++;
+            if( iEnterCount >= 3 )
+            {
+                break;
+            }
+        }
+        // 엔터 키가 아니라면 엔터 키 입력 회수를 초기화
+        else
+        {
+            iEnterCount = 0;
+        }
+        
+        kPrintf( "%c", bKey );
+        if( fwrite( &bKey, 1, 1, fp ) != 1 )
+        {
+            kPrintf( "File Wirte Fail\n" );
+            break;
+        }
+    }
+    
+    kPrintf( "File Create Success\n" );
+    fclose( fp );
+}
+
+/**
+ *  파일을 열어서 데이터를 읽음
+ */
+static void kReadDataFromFile( const char* pcParameterBuffer )
+{
+    FILE* fp;
+    int iEnterCount;
+    BYTE bKey;
+    
+    // 파일 생성
+    fp = fopen( pcParameterBuffer, "r" );
+    if( fp == NULL )
+    {
+        kPrintf( "%s File Open Fail\n", vcFileName );
+        return ;
+    }
+    
+    // 파일의 끝까지 출력하는 것을 반복
+    iEnterCount = 0;
+    while( 1 )
+    {
+        if( fread( &bKey, 1, 1, fp ) != 1 )
+        {
+            break;
+        }
+        kPrintf( "%c", bKey );
+        
+        // 만약 엔터 키이면 엔터 키 회수를 증가시키고 20라인까지 출력했다면 
+        // 더 출력할지 여부를 물어봄
+        if( bKey == KEY_ENTER )
+        {
+            iEnterCount++;
+            
+            if( ( iEnterCount != 0 ) && ( ( iEnterCount % 20 ) == 0 ) )
+            {
+                kPrintf( "Press any key to continue... ('q' is exit) : " );
+                if( kGetCh() == 'q' )
+                {
+                    kPrintf( "\n" );
+                    break;
+                }
+                kPrintf( "\n" );
+                iEnterCount = 0;
+            }
+        }
+    }
+    fclose( fp );
+}

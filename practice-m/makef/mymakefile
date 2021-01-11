@@ -1,0 +1,14 @@
+CFLAGS = -c -g
+CC = gcc
+OBJS = one.o two.o ten.o
+
+morph: $(OBJS)
+	$(CC) -o three $(OBJS)
+clean:
+	@rm -f $(OBJS)
+	@rm -f three
+.c.o:
+	@echo "compiling " $< "..."
+	@echo "compiling " $< "to build" $*.o "..."
+	$(CC) $(CFLAGS) $*.c
+
